@@ -69,7 +69,6 @@ public class ExamExportSystem {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        // Mock Data
         List<StudentResult> database = new ArrayList<>();
         database.add(new StudentResult("S001", "Alice Tan", 85.5));
         database.add(new StudentResult("S002", "Bob Lee", 62.0));
@@ -78,7 +77,7 @@ public class ExamExportSystem {
         database.add(new StudentResult("S005", "Ethan Ng", 92.5));
 
         boolean running = true;
-        String examName = "CS101_Finals";
+        String examName = "CS102_Finals";
 
         while (running) {
             System.out.println("\n==========================================");
