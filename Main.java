@@ -117,38 +117,104 @@ public class Main {
     // US07: Start Exam Logic (New Sprint 2 Task)
     private static void startExam(Scanner keyboard) {
 
-        // AC: Block start if questionList is empty (Test 2)
+        // US07 Pre-Checks
         if (DataStore.questionList.isEmpty()) {
             System.out.println("❌ Error: Exam has no questions. Create one first (Option 1).");
             return;
         }
 
-        // AC: Block start if already SUBMITTED (Test 3)
         if (DataStore.currentSession.getStatus().equals(StudentSession.STATUS_SUBMITTED)) {
             System.out.println("❌ You have already completed this exam.");
             return;
         }
 
         try {
-            // AC: Initializes time and status to IN_PROGRESS (Test 1)
-            DataStore.currentSession.start();
+            // Start the session if it hasn't already (US07 logic)
+            if (!DataStore.currentSession.getStatus().equals(StudentSession.STATUS_IN_PROGRESS)) {
+                DataStore.currentSession.start();
+                System.out.println("\n\n================================================");
+                System.out.println("✅ Exam Session Started! Status: IN PROGRESS");
+                System.out.println("================================================\n");
+            } else {
+                System.out.println("\n... Resuming Exam Session ...");
+            }
 
-            // AC: System must clear the console and display Q1
-            System.out.println("\n\n================================================");
-            System.out.println("✅ Exam Session Started! Status: IN PROGRESS");
-            System.out.println("================================================\n");
-
-            Question firstQuestion = DataStore.questionList.get(0);
-            System.out.println("Q1: " + firstQuestion.getQuestionText());
-
-            // Displays start time (part of Test 6 verification)
+            // Display Start Time (Using your preferred formatted output)
+            // Note: If you have not implemented the DateTimeFormatter, remove the CUSTOM_FORMATTER.format part.
             System.out.println("Started at: " + CUSTOM_FORMATTER.format(DataStore.currentSession.getStartTime()));
 
-            // --- This is where US06 (Answering loop) will be implemented next ---
+            // --- US06: Answering Loop (Core Logic) ---
+            int currentQIndex = 0;
+
+            while (true) {
+                Question q = DataStore.questionList.get(currentQIndex);
+
+                // 1. Display Question
+                System.out.println("\n------------------------------------------------");
+                System.out.println("QUESTION " + (currentQIndex + 1) + " of " + DataStore.questionList.size() + ": " + q.getQuestionText());
+                List<String> opts = q.getOptions();
+                for (int i = 0; i < opts.size(); i++) {
+                    System.out.println("   " + (char)('A' + i) + ") " + opts.get(i));
+                }
+
+                // Show currently saved answer (AC: Allow overwriting)
+                String savedAns = DataStore.currentSession.getAnswer(currentQIndex);
+                if (savedAns != null) {
+                    System.out.println("   [Current Answer: " + savedAns + "]");
+                }
+
+                // 2. Prompt Input
+                System.out.println("------------------------------------------------");
+                System.out.print("Enter Answer (A-D), 'N' for Next, 'P' for Prev, or 'Exit': ");
+
+                // AC: Accept input case-insensitively
+                String input = keyboard.nextLine().trim().toUpperCase();
+
+                // 3. Input Handling
+                if (input.equals("EXIT")) {
+                    System.out.println("Pausing exam... (Timer continues in background)");
+                    break;
+                }
+                else if (input.equals("N")) {
+                    if (currentQIndex < DataStore.questionList.size() - 1) currentQIndex++;
+                    else System.out.println("⚠ This is the last question.");
+                }
+                else if (input.equals("N")) {
+                    // Check if a next question exists
+                    if (currentQIndex < DataStore.questionList.size() - 1) {
+                        currentQIndex++; // Move to the next index
+                    } else {
+                        // AC: Clearer notification for the end of the list
+                        System.out.println("=================================================");
+                        System.out.println("✅ You have reached the **LAST QUESTION** (Q" + (currentQIndex + 1) + ").");
+                        System.out.println("   Type 'Exit' to pause or implement 'Submit' (future feature) to finish.");
+                        System.out.println("=================================================");
+                    }
+                }
+                // AC: Valid Option Check (A, B, C, or D)
+                else if (input.length() == 1 && input.matches("[A-D]")) {
+
+                    // AC: Save Answer Instantly (No try-catch needed now)
+                    DataStore.currentSession.saveAnswer(currentQIndex, input);
+                    // AC: Print Confirmation
+                    System.out.println("✅ Answer [" + input + "] Saved!");
+                }
+                // AC: Empty string check
+                else if (input.isEmpty()) {
+                    System.out.println("⚠ No answer provided.");
+                }
+                // AC: Multiple characters check and invalid input (e.g., "E")
+                else {
+                    System.out.println("❌ Invalid Option. Please enter a single letter (A-D).");
+                }
+            }
 
         } catch (IllegalStateException e) {
-            // Catches the error when trying to start twice (Test 4)
             System.out.println("❌ Error: " + e.getMessage());
+        }
+        // AC: Handle null session crash (This is the most graceful way to handle it at this stage)
+        catch (Exception e) {
+            System.out.println("❌ FATAL ERROR: Session lost or invalid data access. Please restart the application.");
         }
     }
 }

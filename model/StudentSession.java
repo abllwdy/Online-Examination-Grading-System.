@@ -9,13 +9,11 @@ public class StudentSession {
     public static final String STATUS_IN_PROGRESS = "IN_PROGRESS";
     public static final String STATUS_SUBMITTED = "SUBMITTED";
 
-    // Tracks when the exam officially started (for US09/US10 timer logic)
+    // forceMemoryError flag is REMOVED
+
     private Instant startTime;
-
     private String status;
-
-    // Key: Question Index, Value: Answer (e.g., "A")
-    private Map<Integer, String> answers;
+    private Map<Integer, String> answers; // Stores {QuestionIndex : "A"}
 
     public StudentSession() {
         this.status = STATUS_READY;
@@ -23,20 +21,27 @@ public class StudentSession {
         this.startTime = null;
     }
 
-    // AC: Sets status from 'Ready' to 'In Progress' and initializes timer
     public void start() {
         if (this.status.equals(STATUS_READY)) {
             this.status = STATUS_IN_PROGRESS;
             this.startTime = Instant.now();
         } else {
-            // This throws the IllegalStateException needed for Test 4
             throw new IllegalStateException("Exam is already in progress or submitted.");
         }
     }
 
-    // Getters for status checking and timer logic
+    // --- US06 LOGIC: SAVE ANSWER ---
+    public void saveAnswer(int questionIndex, String answer) {
+        // The forceMemoryError check is REMOVED
+        answers.put(questionIndex, answer);
+    }
+
+    // --- GETTERS ---
+    public String getAnswer(int questionIndex) {
+        return answers.get(questionIndex);
+    }
+
     public String getStatus() { return status; }
     public Instant getStartTime() { return startTime; }
-
-    // NOTE: More methods for US06 (saving answers) will be added later.
+    public Map<Integer, String> getAnswersMap() { return answers; }
 }
