@@ -40,23 +40,23 @@ public class InstructorApp {
      * AC1 & AC2: Handle exam creation
      */
     private static void createExam() {
-        System.out.println("\n=== Create New Exam ===");
-        
-        System.out.print("Enter exam title: ");
-        String title = scanner.nextLine();
+    System.out.println("\n=== Create New Exam ===");
+    
+    System.out.print("Enter exam title: ");
+    String title = scanner.nextLine();
 
-        System.out.print("Enter exam instructions: ");
-        String instructions = scanner.nextLine();
+    System.out.print("Enter exam instructions: ");
+    String instructions = scanner.nextLine();
 
-        // Call service to create exam
-        String result = examService.createExam(title, instructions);
-        System.out.println(result);
+    ExamCreationResult result = examService.createExam(title, instructions);
+    System.out.println(result.getMessage());
 
-        // If successful, show the exam was added
-        if (result.equals("Exam created successfully")) {
-            System.out.println("Total exams: " + examService.getExamCount());
-        }
+    if (result.isSuccess()) {
+        System.out.println("Exam ID: " + result.getExam().getExamId());
+        System.out.println("Total exams: " + examService.getExamCount());
     }
+}
+
 
     /**
      * AC3: Display all created exams

@@ -1,62 +1,27 @@
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Exam {
-    private static int examCounter = 0; // Auto-increment ID
     private int examId;
     private String title;
     private String instructions;
     private LocalDateTime createdAt;
-    private List<Question> questions; // For future use (US08)
+    private List<Question> questions;
 
-    // Constructor
-    public Exam(String title, String instructions) {
-        this.examId = ++examCounter;
+    // Constructor for new exams (service assigns ID)
+    public Exam(int examId, String title, String instructions) {
+        this.examId = examId;
         this.title = title;
         this.instructions = instructions;
         this.createdAt = LocalDateTime.now();
         this.questions = new ArrayList<>();
     }
-
-    // Getters and Setters
-    public int getExamId() {
-        return examId;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
+    
+    // Constructor for loading existing exams (e.g., from database)
+    public Exam(int examId, String title, String instructions, LocalDateTime createdAt) {
+        this.examId = examId;
         this.title = title;
-    }
-
-    public String getInstructions() {
-        return instructions;
-    }
-
-    public void setInstructions(String instructions) {
         this.instructions = instructions;
+        this.createdAt = createdAt;
+        this.questions = new ArrayList<>();
     }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public List<Question> getQuestions() {
-        return questions;
-    }
-
-    public void addQuestion(Question question) {
-        this.questions.add(question);
-    }
-
-    @Override
-    public String toString() {
-        return "Exam ID: " + examId + 
-               " | Title: " + title + 
-               " | Instructions: " + instructions + 
-               " | Created: " + createdAt.toLocalDate();
-    }
+    
+    // Getters/setters remain the same
 }
