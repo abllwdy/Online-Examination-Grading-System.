@@ -75,4 +75,47 @@
 
 </body>
 </html>
+<script>
+    // DOM Elements
+    const modal = document.getElementById('confirmationModal');
+    const form = document.getElementById('examForm');
+    const successMsg = document.getElementById('successMessage');
+    const mainBtn = document.getElementById('mainSubmitBtn');
+    const statusArea = document.getElementById('statusArea');
+
+    // 1. Check Previous Submission on Load
+    window.onload = function() {
+        if (localStorage.getItem("examStatus") === "submitted") {
+            lockExam();
+        }
+    };
+
+    // 2. Event Listeners
+    mainBtn.onclick = function() { modal.style.display = 'block'; };
+    
+    document.getElementById('cancelBtn').onclick = function() { 
+        modal.style.display = 'none'; 
+    };
+
+    document.getElementById('confirmBtn').onclick = function() {
+        submitExam();
+    };
+
+    // 3. Submission Logic
+    function submitExam() {
+        modal.style.display = 'none'; // Close modal
+        localStorage.setItem("examStatus", "submitted"); // Save state
+        lockExam(); // Update UI
+    }
+
+    // 4. Lock UI Helper
+    function lockExam() {
+        successMsg.style.display = 'block';
+        form.classList.add('disabled-exam');
+        mainBtn.style.display = 'none';
+        statusArea.innerText = "Status: Completed";
+        statusArea.style.color = "green";
+        statusArea.style.fontWeight = "bold";
+    }
+</script>
 
